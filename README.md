@@ -17,3 +17,7 @@ and then run project :
 ```
 mvn exec:java
 ```
+
+Link for OpCode list and detail
+-------------------------------
+[http://www.cs.au.dk/~mis/dOvs/jvmspec/ref-Java.html](http://www.cs.au.dk/~mis/dOvs/jvmspec/ref-Java.html)
