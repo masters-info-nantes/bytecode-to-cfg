@@ -17,6 +17,9 @@ public class MethodAnalyzer implements MethodVisitor{
 	 * Important methods :
 	 * - visitCode & visitEnd : entry and exit method
 	 * - visitLineNumber : go to specified line (in folder)
+	 * - visitInsn (3) : met un zéro dans une case mémoire
+	 * - visitVarInsn (54) : assigne une valeur à la variable donnée
+	 * - visitLabel : passe à une autre instruction
 	 * 
 	 * @see org.objectweb.asm.MethodVisitor#visitAnnotation(java.lang.String, boolean)
 	 */
@@ -77,7 +80,7 @@ public class MethodAnalyzer implements MethodVisitor{
 	}
 
 	public void visitLineNumber(int arg0, Label arg1) {
-		System.out.println("visitLineNumber: " + arg0 + " # " + arg1);
+		System.out.println("\nvisitLineNumber: " + arg0 + " # " + arg1);
 	}
 
 	public void visitLocalVariable(String arg0, String arg1, String arg2,
