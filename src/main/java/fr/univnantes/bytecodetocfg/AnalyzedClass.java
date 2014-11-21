@@ -50,12 +50,13 @@ public class AnalyzedClass {
 	}
 	
 	public void md(){
-		int x = 2, y = 1;
+		int x = 2;
 		if(x < 3){
 			x = 6;
 		}
 		else {
 			x = 7;
 		}
+		return;
 	}
 }

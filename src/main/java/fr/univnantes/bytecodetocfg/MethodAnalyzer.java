@@ -1,5 +1,8 @@
 package fr.univnantes.bytecodetocfg;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
@@ -7,12 +10,25 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
+import fr.univnantes.controlflowgraph.Arc;
+import fr.univnantes.controlflowgraph.Condition;
+import fr.univnantes.controlflowgraph.Instruction;
+import fr.univnantes.controlflowgraph.Node;
+
 /*
  * Method analyzer triggered during method analyze.
  * Used to create control flow graph
  */
 public class MethodAnalyzer implements MethodVisitor{
 
+	private Node graph;
+	private Node currentNode;
+	
+	public MethodAnalyzer(){
+		this.graph = new Instruction("Begin", "");
+		this.currentNode = this.graph;
+	}
+	
 	/*
 	 * Important methods :
 	 * - visitCode & visitEnd : entry and exit method
@@ -23,6 +39,35 @@ public class MethodAnalyzer implements MethodVisitor{
 	 * 
 	 * @see org.objectweb.asm.MethodVisitor#visitAnnotation(java.lang.String, boolean)
 	 */
+	
+	public Node getGraph(){
+		return this.graph;
+	}
+	
+	public void visitLabel(Label arg0) {	
+		Node existingNode = this.graph.findNode(arg0.toString());
+		
+		if(existingNode == null){
+			existingNode = new Instruction(arg0.toString(), "");
+		}
+
+		Arc nextArc = new Arc("", existingNode);
+		this.currentNode.addArc(nextArc);
+		this.currentNode = existingNode;
+		
+		System.out.println("visitLabel: " + arg0);
+	}
+	
+	public void visitJumpInsn(int arg0, Label arg1) {
+			
+		if(arg0 != 167){ // Not a GOTO instruction
+			Node otherwise = new Instruction(arg1.toString(), "");	
+			Arc arcCond = new Arc("", otherwise);
+			this.currentNode.addArc(arcCond);
+		}
+
+		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
+	}
 	
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
 		System.out.println("visitAnnotation " + arg0 + " # " + arg1);
@@ -65,14 +110,6 @@ public class MethodAnalyzer implements MethodVisitor{
 
 	public void visitIntInsn(int arg0, int arg1) {
 		System.out.println("visitIntInsn: " + arg0 + " # " + arg1);
-	}
-
-	public void visitJumpInsn(int arg0, Label arg1) {
-		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
-	}
-
-	public void visitLabel(Label arg0) {
-		System.out.println("visitLabel: " + arg0);
 	}
 
 	public void visitLdcInsn(Object arg0) {

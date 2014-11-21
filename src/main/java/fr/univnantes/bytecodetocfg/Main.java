@@ -1,11 +1,17 @@
 package fr.univnantes.bytecodetocfg;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 
+import fr.univnantes.controlflowgraph.App;
 import fr.univnantes.controlflowgraph.Arc;
 import fr.univnantes.controlflowgraph.Condition;
 import fr.univnantes.controlflowgraph.Instruction;
@@ -17,63 +23,72 @@ import fr.univnantes.controlflowgraph.Node;
  */
 public class Main {
     
+	public static MethodAnalyzer analyzer;
     public static void main(String[] args) throws Exception{
-    	System.out.println("test\n");
+    	System.out.println("Your're in main method");
         InputStream in = AnalyzedClass.class.getResourceAsStream("AnalyzedClass.class");
         ClassReader classReader = new ClassReader(in);
         classReader.accept(new ClassAnalyzer(), 0);
         
-        graphtest();
+        Node graph = analyzer.getGraph();
+		File file = new File("html/data.js");
+		Main.display(file, graph);
     }
     
-    public static void graphtest() {
-		System.out.println("Hello World!");
-		Node origin,nA,nB,nC,nD;
-		Arc a;
+    /**
+	 * Generate js code to display graph in web browser
+	 * 	- html folder in root directory contains vis.js library
+	 *  - to see graph see html/index.html in a browser
+	 *  - not sure to keep for future release
+	 * @param file
+	 * @throws IOException
+	 */
+	public static void display(File file, Node graph) throws IOException {
 		
-		/* Example :
-		 * 
-		 * x = 8;
-		 * if(x > 8) {
-		 *	  y = 6
-		 * } else if(x == 8 ) {
-		 *	  y = 7
-		 * } else {
-		 *    y = 1;
-		 * }
-		 * 
-		 */
+		//-----
+		String path = file.getAbsolutePath();
+		file.delete();
+		BufferedWriter nfile = new BufferedWriter(new FileWriter(path, true));
+		nfile.write("var nodes = [];\n");
+		nfile.write("var edges = [];\n");
+		//-----
 		
-		origin = new Instruction("x = 8");
-		
-		nA = new Condition();
-		a = new Arc(" ",nA);
-		origin.addArc(a);
-		
-		nB = new Instruction("y = 6");
-		a = new Arc("x > 8",nB);
-		nA.addArc(a);
-		
-		nC = new Instruction("y = 7");
-		a = new Arc("x == 8",nC);
-		nA.addArc(a);
-		
-		nD = new Instruction("y = 1");
-		a = new Arc(" ",nD);
-		nA.addArc(a);
-		
-		// Print example
-		System.out.println("Node["+origin+"]");
+		// 2 loops because all nodes must declared before be mentionned in edges
+		boolean start = true;
 		LinkedList<Node> queue = new LinkedList<Node>();
-		queue.add(origin);
+		queue.add(graph);
 		Node cur = null;
-		System.out.println("size ="+queue.size());
+		ArrayList<Integer> idList = new ArrayList<Integer>();
 		while(queue.size() > 0) {
 			cur = queue.remove();
-			System.out.println(cur.toString());	
+			if(!idList.contains(cur.hashCode())){
+				if(start){
+					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: \"Start node\" });\n");
+					start = false;
+				}
+				else {
+					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: String(\"" + cur.getLabel() + "\") });\n");		
+				}	
+			}
+			
+			idList.add(cur.hashCode());
+			
 			for(Arc arc : cur.getArcs()) {
 				queue.add(arc.getNext());
 			}
 		}
+		
+		queue.add(graph);
+		cur = null;
+		while(queue.size() > 0) {
+			cur = queue.remove();			
+
+			for(Arc arc : cur.getArcs()) {
+				nfile.write("edges.push({ from: " + cur.hashCode() + ", to: " + arc.getNext().hashCode() + " });\n");
+				queue.add(arc.getNext());
+			}
+		}
+		
+		nfile.close();
 	}
 }

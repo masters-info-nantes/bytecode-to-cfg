@@ -5,6 +5,10 @@ Description
 -----------
 Generation of a Control Flow Graph from a java bytecode using ASM
 
+Requirements
+-----------
+- [Control flow graph](https://github.com/masterALMA2016/control-flow-graph) installed
+
 Developer
 ---------
 You must be located in project folder (where pom.xml file is) 
