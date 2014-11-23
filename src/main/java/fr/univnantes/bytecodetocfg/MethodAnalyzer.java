@@ -45,10 +45,10 @@ public class MethodAnalyzer implements MethodVisitor{
 	}
 	
 	public void visitLabel(Label arg0) {	
-		Node existingNode = this.graph.findNode(arg0.toString());
+		Node existingNode = this.graph.findNode(getLabelId(arg0));
 		
 		if(existingNode == null){
-			existingNode = new Instruction(arg0.toString(), "");
+			existingNode = new Instruction(getLabelId(arg0), "");
 		}
 
 		Arc nextArc = new Arc("", existingNode);
@@ -61,12 +61,17 @@ public class MethodAnalyzer implements MethodVisitor{
 	public void visitJumpInsn(int arg0, Label arg1) {
 			
 		if(arg0 != 167){ // Not a GOTO instruction
-			Node otherwise = new Instruction(arg1.toString(), "");	
+			Node otherwise = new Instruction(getLabelId(arg1), "");	
 			Arc arcCond = new Arc("", otherwise);
 			this.currentNode.addArc(arcCond);
 		}
 
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
+	}
+	
+	private int getLabelId(Label label){
+		String sLabel = label.toString();
+		return Integer.parseInt(sLabel.substring(1, sLabel.length()));
 	}
 	
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {

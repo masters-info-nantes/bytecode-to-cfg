@@ -67,7 +67,7 @@ public class Main {
 					start = false;
 				}
 				else {
-					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: String(\"" + cur.getLabel() + "\") });\n");		
+					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: String(\"" + cur.getId() + "\") });\n");		
 				}	
 			}
 			
