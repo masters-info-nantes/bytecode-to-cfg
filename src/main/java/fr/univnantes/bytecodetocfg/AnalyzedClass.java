@@ -53,8 +53,7 @@ public class AnalyzedClass {
 		int x = 2;
 		if(x < 3){
 			x = 6;
-		}
-		else {
+		} else {
 			x = 7;
 		}
 		return;

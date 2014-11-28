@@ -61,17 +61,17 @@ public class Main {
 		ArrayList<Integer> idList = new ArrayList<Integer>();
 		while(queue.size() > 0) {
 			cur = queue.remove();
-			if(!idList.contains(cur.hashCode())){
+			if(!idList.contains(cur.getId())){
 				if(start){
-					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: \"Start node\" });\n");
+					nfile.write("nodes.push({ id: " + cur.getId() + ", label: String(\"" + cur.getName() + "\"), title: \"Start node\" });\n");
 					start = false;
 				}
 				else {
-					nfile.write("nodes.push({ id: " + cur.hashCode() + ", label: String(\"" + cur.getName() + "\"), title: String(\"" + cur.getId() + "\") });\n");		
+					nfile.write("nodes.push({ id: " + cur.getId() + ", label: String(\"" + cur.getName() + "\"), title: String(\"" + cur.getId() + "\") });\n");		
 				}	
 			}
 			
-			idList.add(cur.hashCode());
+			idList.add(cur.getId());
 			
 			for(Arc arc : cur.getArcs()) {
 				queue.add(arc.getNext());
@@ -84,7 +84,7 @@ public class Main {
 			cur = queue.remove();			
 
 			for(Arc arc : cur.getArcs()) {
-				nfile.write("edges.push({ from: " + cur.hashCode() + ", to: " + arc.getNext().hashCode() + " });\n");
+				nfile.write("edges.push({ from: " + cur.getId() + ", to: " + arc.getNext().getId() + " });\n");
 				queue.add(arc.getNext());
 			}
 		}

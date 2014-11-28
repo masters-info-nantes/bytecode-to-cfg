@@ -50,21 +50,33 @@ public class MethodAnalyzer implements MethodVisitor{
 		if(existingNode == null){
 			existingNode = new Instruction(getLabelId(arg0), "");
 		}
-
-		Arc nextArc = new Arc("", existingNode);
-		this.currentNode.addArc(nextArc);
+		else {
+			System.out.println("exist "+arg0);
+		}
+		if(!gotoInst) {
+			System.out.println("from "+currentNode+" to "+existingNode);
+			Arc nextArc = new Arc("", existingNode);
+			this.currentNode.addArc(nextArc);
+		}
+		else
+			gotoInst = false;
 		this.currentNode = existingNode;
-		
 		System.out.println("visitLabel: " + arg0);
 	}
 	
+	boolean gotoInst = false;
 	public void visitJumpInsn(int arg0, Label arg1) {
-			
-		if(arg0 != 167){ // Not a GOTO instruction
+	
+		if(arg0 == 167){
+			gotoInst = true;
+		}
+		
+		//else {// Not a GOTO instruction
 			Node otherwise = new Instruction(getLabelId(arg1), "");	
 			Arc arcCond = new Arc("", otherwise);
 			this.currentNode.addArc(arcCond);
-		}
+			System.out.println("from "+currentNode+" to "+otherwise);
+		//}//	
 
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
 	}
