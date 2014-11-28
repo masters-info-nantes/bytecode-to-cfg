@@ -44,6 +44,8 @@ public class MethodAnalyzer implements MethodVisitor{
 		return this.graph;
 	}
 	
+	LinkedList<Node> next = new LinkedList<Node>();
+	
 	public void visitLabel(Label arg0) {	
 		Node existingNode = this.graph.findNode(getLabelId(arg0));
 		
@@ -61,6 +63,7 @@ public class MethodAnalyzer implements MethodVisitor{
 		else
 			gotoInst = false;
 		this.currentNode = existingNode;
+		next.add(existingNode);
 		System.out.println("visitLabel: " + arg0);
 	}
 	
@@ -71,12 +74,10 @@ public class MethodAnalyzer implements MethodVisitor{
 			gotoInst = true;
 		}
 		
-		//else {// Not a GOTO instruction
-			Node otherwise = new Instruction(getLabelId(arg1), "");	
-			Arc arcCond = new Arc("", otherwise);
-			this.currentNode.addArc(arcCond);
-			System.out.println("from "+currentNode+" to "+otherwise);
-		//}//	
+		Node otherwise = new Instruction(getLabelId(arg1), "");	
+		Arc arcCond = new Arc("", otherwise);
+		this.currentNode.addArc(arcCond);
+		System.out.println("from "+currentNode+" to "+otherwise);
 
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
 	}
