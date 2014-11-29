@@ -4,7 +4,7 @@ package fr.univnantes.bytecodetocfg;
  * Class which contains the method to analyze
  */
 public class AnalyzedClass {
-	public int md(int factor){
+	public int md1(int factor){
 		int sum = 76;
 		
 		for(
@@ -42,7 +42,7 @@ public class AnalyzedClass {
 		return x;
 	}
 	
-	public void md1(){
+	public void md(){
 		int x = 2;
 		if(x < 3){
 			x = 6;
