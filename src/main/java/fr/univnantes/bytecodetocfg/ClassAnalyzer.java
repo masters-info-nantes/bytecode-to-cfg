@@ -25,7 +25,7 @@ public class ClassAnalyzer implements ClassVisitor{
 		
 //		System.out.println("visitMethod: " + arg0 + " # " + arg1 + " # " + arg2 + " # " + arg3 + " # " + arg4);
 		
-		if(arg1.equals("md")){
+		if(arg1.equals(AnalyzedClass.methodToAnalyze)){
 			MethodAnalyzer analyzer = new MethodAnalyzer();
 			Main.analyzer = analyzer;
 			return analyzer;

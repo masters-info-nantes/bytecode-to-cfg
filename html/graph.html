@@ -9,8 +9,8 @@
 
     <script type="text/javascript">
         var network = null;
-        var layoutMethod = "direction";
-
+        //var layoutMethod = "direction";
+        var layoutMethod = "hubsize";
         function draw() {
             // create a network
             var container = document.getElementById('mynetwork');
@@ -23,10 +23,27 @@
                 hierarchicalLayout: {
                     layout: layoutMethod
                 },
-                edges: {style:"arrow"},
+                nodes: {
+                    color: {
+                        background: "#97C2FC",
+                        border: "#2B7CE9",
+                        highlight: {
+                            border: "#DD0000",
+                            background: "#D2E5FF"
+                        },
+                        hover: {
+                            border: "#2B7CE9",
+                            background: "#D2E5FF"
+                        }
+                    }
+                },
+                edges: {
+                    style: "arrow",
+                    inheritColor: "from"
+                },                
                 smoothCurves:false,
-                height: '500px',
-                width: '900px'
+                height: '600px',
+                width: '1300px'
             };
             network = new vis.Network(container, data, options);
         }
@@ -34,6 +51,20 @@
     </script>
 </head>
 
-<body id="mynetwork" onload="draw();">
+<body onload="draw();">
+    Layout method:
+    <select id="layout">
+        <option value="hubsize">hubsize</option>
+        <option value="direction">direction</option>
+    </select><br/>
+    <div id="mynetwork"></div>
+    <p id="selection"></p>
+    <script language="JavaScript">
+        var dropdown = document.getElementById("layout");
+        dropdown.onchange = function() {
+            layoutMethod = dropdown.value;
+            draw();
+        }
+    </script>
 </body>
 </html>

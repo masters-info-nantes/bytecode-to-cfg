@@ -4,29 +4,19 @@ package fr.univnantes.bytecodetocfg;
  * Class which contains the method to analyze
  */
 public class AnalyzedClass {
-	public int md(int factor){
-		int sum = 76;
-		
-		for(
-				int i = 1;
-				i >= 98;
-				i++
-		){
-			sum += sum * i;
-			/*
-			if(sum > 25){
-				System.out.println("Sum got ultimate power");
-			}
-			else if(sum  < 4){
-				System.out.println("Sum power was drained");
-			}*/
+	public static final String methodToAnalyze = "ForIfElse";
+	
+	public int IfElse(){
+		int x = 2;
+		if(x < 3){
+			x = 6;
+		} else {
+			x = 7;
 		}
-		return sum;
+		return 0;
 	}
-	public void print(int a){
-		a += 4;
-	}
-	public int test(int y){
+	
+	public int IfElseIf(int y){
 
 		int x = 1;
 		String s = new String("er"), a = new String("t");
@@ -42,13 +32,45 @@ public class AnalyzedClass {
 		return x;
 	}
 	
-	public void md1(){
-		int x = 2;
-		if(x < 3){
-			x = 6;
-		} else {
-			x = 7;
+	public int ForLoop(int factor){
+		int sum = 76;
+		
+		for(
+				int i = 1;
+				i >= 98;
+				i++
+		){
+			sum += sum * i;
 		}
-		return;
+		return sum;
+	}
+
+	public int ForIf(int factor){
+		int sum = 76;
+		
+		for(int i = 1; i >= 98; i++){
+			sum += sum * i;
+			
+			if(sum > 25){
+				System.out.println("Sum got ultimate power");
+			}
+		}
+		return sum;
+	}
+	
+	public int ForIfElse(int factor){
+		int sum = 76;
+		
+		for(int i = 1; i >= 98; i++){
+			sum += sum * i;
+			
+			if(sum > 25){
+				System.out.println("Sum got ultimate power");
+			}
+			else if(sum  < 4){
+				System.out.println("Sum power was drained");
+			}
+		}
+		return sum;
 	}
 }
