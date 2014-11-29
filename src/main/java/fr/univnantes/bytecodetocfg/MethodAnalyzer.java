@@ -23,10 +23,14 @@ public class MethodAnalyzer implements MethodVisitor{
 
 	private Node graph;
 	private Node currentNode;
+	private boolean linkLast;
+	private boolean lastCondition; // True if a condition has been found and end block not reach
 	
 	public MethodAnalyzer(){
 		this.graph = new Instruction("Begin", "");
 		this.currentNode = this.graph;
+		this.linkLast = true;
+		this.lastCondition = false;
 	}
 	
 	/*
@@ -44,42 +48,57 @@ public class MethodAnalyzer implements MethodVisitor{
 		return this.graph;
 	}
 	
-	LinkedList<Node> next = new LinkedList<Node>();
+	//LinkedList<Node> next = new LinkedList<Node>();
 	
-	public void visitLabel(Label arg0) {	
+	public void visitLabel(Label arg0) {
+		
+		// If node allready exists, don't duplicate
 		Node existingNode = this.graph.findNode(getLabelId(arg0));
 		
 		if(existingNode == null){
 			existingNode = new Instruction(getLabelId(arg0), "");
 		}
 		else {
-			System.out.println("exist "+arg0);
+			//System.out.println("exist "+arg0);
 		}
-		if(!gotoInst) {
-			System.out.println("from "+currentNode+" to "+existingNode);
+		
+		// For conditions don't link if end with else block
+		if(linkLast) {
+			//System.out.println("from "+currentNode+" to "+existingNode);
 			Arc nextArc = new Arc("", existingNode);
 			this.currentNode.addArc(nextArc);
 		}
-		else
-			gotoInst = false;
-		this.currentNode = existingNode;
-		next.add(existingNode);
-		System.out.println("visitLabel: " + arg0);
-	}
-	
-	boolean gotoInst = false;
-	public void visitJumpInsn(int arg0, Label arg1) {
-	
-		if(arg0 == 167){
-			gotoInst = true;
+		else {
+			linkLast = true;
 		}
 		
-		Node otherwise = new Instruction(getLabelId(arg1), "");	
+		this.currentNode = existingNode;
+
+		System.out.println("\nvisitLabel: " + arg0 + " - currentNode: " + currentNode.getName());
+		//next.add(existingNode);
+	}
+	
+	public void visitJumpInsn(int arg0, Label arg1) {		
+		
+		// Goto instruction : don't link condition end 
+		// with else block
+		if(arg0 == 167){
+			this.linkLast = /*!this.lastCondition*/ false;
+			this.lastCondition = false;
+		}
+		
+		// Create else node to use it later
+		Node otherwise = this.graph.findNode(getLabelId(arg1));
+		if(otherwise == null){
+			otherwise = new Instruction(getLabelId(arg1), "");
+		}
+
 		Arc arcCond = new Arc("", otherwise);
 		this.currentNode.addArc(arcCond);
-		System.out.println("from "+currentNode+" to "+otherwise);
-
-		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1);
+		//System.out.println("from "+currentNode+" to "+otherwise);
+		
+		this.lastCondition = true;
+		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1 + " - create: " + otherwise.getName());
 	}
 	
 	private int getLabelId(Label label){
@@ -135,7 +154,7 @@ public class MethodAnalyzer implements MethodVisitor{
 	}
 
 	public void visitLineNumber(int arg0, Label arg1) {
-		System.out.println("\nvisitLineNumber: " + arg0 + " # " + arg1);
+		System.out.println("visitLineNumber: " + arg0 + " # " + arg1);
 	}
 
 	public void visitLocalVariable(String arg0, String arg1, String arg2,

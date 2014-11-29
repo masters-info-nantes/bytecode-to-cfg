@@ -7,9 +7,11 @@ public class AnalyzedClass {
 	public int md(int factor){
 		int sum = 76;
 		
-		for(int i = 1;
-				i >= factor;
-				i++){
+		for(
+				int i = 1;
+				i >= 98;
+				i++
+		){
 			sum += sum * i;
 			/*
 			if(sum > 25){
@@ -40,7 +42,7 @@ public class AnalyzedClass {
 		return x;
 	}
 	
-	public void test2(){
+	public void md1(){
 		int x = 2;
 		if(x < 3){
 			x = 6;
