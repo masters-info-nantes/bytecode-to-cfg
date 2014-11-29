@@ -53,7 +53,7 @@ public class Main {
 		nfile.write("var edges = [];\n");
 		//-----
 		
-		// 2 loops because all nodes must declared before be mentionned in edges
+		// 2 loops because all nodes must declared before be used in edges
 		boolean start = true;
 		LinkedList<Node> queue = new LinkedList<Node>();
 		queue.add(graph);
@@ -61,6 +61,7 @@ public class Main {
 		ArrayList<Integer> idList = new ArrayList<Integer>();
 		while(queue.size() > 0) {
 			cur = queue.remove();
+
 			if(!idList.contains(cur.getId())){
 				if(start){
 					nfile.write("nodes.push({ id: " + cur.getId() + ", label: String(\"" + cur.getName() + "\"), title: \"Start node\" });\n");
@@ -74,18 +75,25 @@ public class Main {
 			idList.add(cur.getId());
 			
 			for(Arc arc : cur.getArcs()) {
-				queue.add(arc.getNext());
+				if(!idList.contains(arc.getNext().getId())){
+					queue.add(arc.getNext());
+				}
 			}
 		}
 		
+		ArrayList<Node> visited = new ArrayList<Node>();
 		queue.add(graph);
 		cur = null;
 		while(queue.size() > 0) {
-			cur = queue.remove();			
+			cur = queue.remove();
+			visited.add(cur);
 
-			for(Arc arc : cur.getArcs()) {
+			for(Arc arc : cur.getArcs()) {				
 				nfile.write("edges.push({ from: " + cur.getId() + ", to: " + arc.getNext().getId() + " });\n");
-				queue.add(arc.getNext());
+
+				if(!visited.contains(arc.getNext())){			
+					queue.add(arc.getNext());
+				}
 			}
 		}
 		

@@ -21,6 +21,8 @@ import fr.univnantes.controlflowgraph.Node;
  */
 public class MethodAnalyzer implements MethodVisitor{
 
+	private static final int GOTO_INST = 167;
+	
 	private Node graph;
 	private Node currentNode;
 	private boolean linkLast;
@@ -64,7 +66,7 @@ public class MethodAnalyzer implements MethodVisitor{
 		
 		// For conditions don't link if end with else block
 		if(linkLast) {
-			//System.out.println("from "+currentNode+" to "+existingNode);
+			System.out.println("from "+currentNode+" to "+existingNode);
 			Arc nextArc = new Arc("", existingNode);
 			this.currentNode.addArc(nextArc);
 		}
@@ -82,9 +84,12 @@ public class MethodAnalyzer implements MethodVisitor{
 		
 		// Goto instruction : don't link condition end 
 		// with else block
-		if(arg0 == 167){
-			this.linkLast = /*!this.lastCondition*/ false;
-			this.lastCondition = false;
+		if(arg0 == GOTO_INST){
+			this.linkLast = !this.lastCondition;
+			//this.lastCondition = false; // Goto = endif, so no if block unclosed
+		}
+		else {
+			this.lastCondition = true;
 		}
 		
 		// Create else node to use it later
@@ -93,11 +98,16 @@ public class MethodAnalyzer implements MethodVisitor{
 			otherwise = new Instruction(getLabelId(arg1), "");
 		}
 
-		Arc arcCond = new Arc("", otherwise);
-		this.currentNode.addArc(arcCond);
-		//System.out.println("from "+currentNode+" to "+otherwise);
+		//if(this.lastCondition){
+			Arc arcCond = new Arc("", otherwise);
+			this.currentNode.addArc(arcCond);			
+		//}
 		
-		this.lastCondition = true;
+		if(arg0 == GOTO_INST){
+			this.lastCondition = false; // Goto = endif, so no if block unclosed
+		}
+
+		System.out.println("from "+currentNode+" to "+otherwise);
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1 + " - create: " + otherwise.getName());
 	}
 	
