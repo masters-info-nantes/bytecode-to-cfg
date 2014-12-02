@@ -7,6 +7,9 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
 
+import fr.univnantes.controlflowgraph.Instruction;
+import fr.univnantes.controlflowgraph.Node;
+
 /*
  * Class visitor to detect when the analyzer reach
  * method to analyze
@@ -16,6 +19,15 @@ import org.objectweb.asm.commons.InstructionAdapter;
  */
 public class ClassAnalyzer implements ClassVisitor{
 
+	// Name fo the method to analyze
+	private String methodName;
+	
+	private MethodAnalyzer methodAnalyser;
+		
+	public ClassAnalyzer(String methodToAnalyse){
+		this.methodName = methodToAnalyse;
+	}
+	
 	/*
 	 * Method triggered before a method analyze begins 
 	 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
@@ -25,13 +37,16 @@ public class ClassAnalyzer implements ClassVisitor{
 		
 //		System.out.println("visitMethod: " + arg0 + " # " + arg1 + " # " + arg2 + " # " + arg3 + " # " + arg4);
 		
-		if(arg1.equals(AnalyzedClass.methodToAnalyze)){
-			MethodAnalyzer analyzer = new MethodAnalyzer();
-			Main.analyzer = analyzer;
-			return analyzer;
+		if(arg1.equals(this.methodName)){
+			this.methodAnalyser = new MethodAnalyzer();
+			return this.methodAnalyser;
 		}
 
         return null;
+	}
+	
+	public Node getGraph(){
+		return this.methodAnalyser.getGraph();
 	}
 	
 	/*

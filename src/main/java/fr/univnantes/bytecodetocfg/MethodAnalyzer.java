@@ -1,17 +1,12 @@
 package fr.univnantes.bytecodetocfg;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import fr.univnantes.controlflowgraph.Arc;
-import fr.univnantes.controlflowgraph.Condition;
+import fr.univnantes.controlflowgraph.GraphFactory;
 import fr.univnantes.controlflowgraph.Instruction;
 import fr.univnantes.controlflowgraph.Node;
 
@@ -23,51 +18,32 @@ public class MethodAnalyzer implements MethodVisitor{
 
 	private static final int GOTO_INST = 167;
 	
+	private GraphFactory factory;
 	private Node graph;
 	private Node currentNode;
 	private boolean linkLast;
 	private boolean lastCondition; // True if a condition has been found and end block not reach
 	
 	public MethodAnalyzer(){
-		this.graph = new Instruction("Begin", "");
+		this.factory = new GraphFactory();
+		this.graph = this.factory.makeInstruction("Begin");
 		this.currentNode = this.graph;
 		this.linkLast = true;
 		this.lastCondition = false;
-	}
-	
-	/*
-	 * Important methods :
-	 * - visitCode & visitEnd : entry and exit method
-	 * - visitLineNumber : go to specified line (in folder)
-	 * - visitInsn (3) : met un zéro dans une case mémoire
-	 * - visitVarInsn (54) : assigne une valeur à la variable donnée
-	 * - visitLabel : passe à une autre instruction
-	 * 
-	 * @see org.objectweb.asm.MethodVisitor#visitAnnotation(java.lang.String, boolean)
-	 */
-	
-	public Node getGraph(){
-		return this.graph;
-	}
-	
-	//LinkedList<Node> next = new LinkedList<Node>();
+	}	
 	
 	public void visitLabel(Label arg0) {
 		
 		// If node allready exists, don't duplicate
-		Node existingNode = this.graph.findNode(getLabelId(arg0));
+		Node existingNode = this.factory.findNode(getLabelId(arg0));
 		
 		if(existingNode == null){
-			existingNode = new Instruction(getLabelId(arg0), "");
-		}
-		else {
-			//System.out.println("exist "+arg0);
+			existingNode = this.factory.makeInstruction(getLabelId(arg0), "");
 		}
 		
 		// For conditions don't link if end with else block
 		if(linkLast) {
-			System.out.println("from "+currentNode+" to "+existingNode);
-			Arc nextArc = new Arc("", existingNode);
+			Arc nextArc = this.factory.makeArc("", existingNode);
 			this.currentNode.addArc(nextArc);
 		}
 		else {
@@ -75,9 +51,7 @@ public class MethodAnalyzer implements MethodVisitor{
 		}
 		
 		this.currentNode = existingNode;
-
 		System.out.println("\nvisitLabel: " + arg0 + " - currentNode: " + currentNode.getName());
-		//next.add(existingNode);
 	}
 	
 	public void visitJumpInsn(int arg0, Label arg1) {		
@@ -93,13 +67,13 @@ public class MethodAnalyzer implements MethodVisitor{
 		}
 		
 		// Create else node to use it later
-		Node otherwise = this.graph.findNode(getLabelId(arg1));
+		Node otherwise = this.factory.findNode(getLabelId(arg1));
 		if(otherwise == null){
-			otherwise = new Instruction(getLabelId(arg1), "");
+			otherwise = this.factory.makeInstruction(getLabelId(arg1), "");
 		}
 
 		//if(this.lastCondition){
-			Arc arcCond = new Arc("", otherwise);
+			Arc arcCond = this.factory.makeArc("", otherwise);
 			this.currentNode.addArc(arcCond);			
 		//}
 		
@@ -107,13 +81,16 @@ public class MethodAnalyzer implements MethodVisitor{
 			this.lastCondition = false; // Goto = endif, so no if block unclosed
 		}
 
-		System.out.println("from "+currentNode+" to "+otherwise);
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1 + " - create: " + otherwise.getName());
 	}
 	
 	private int getLabelId(Label label){
 		String sLabel = label.toString();
 		return Integer.parseInt(sLabel.substring(1, sLabel.length()));
+	}
+	
+	public Node getGraph(){
+		return this.graph;
 	}
 	
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {

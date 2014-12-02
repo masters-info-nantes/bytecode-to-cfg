@@ -4,7 +4,6 @@ package fr.univnantes.bytecodetocfg;
  * Class which contains the method to analyze
  */
 public class AnalyzedClass {
-	public static final String methodToAnalyze = "ForIfElse";
 	
 	public int IfElse(){
 		int x = 2;
@@ -37,7 +36,7 @@ public class AnalyzedClass {
 		
 		for(
 				int i = 1;
-				i >= 98;
+				i >= factor;
 				i++
 		){
 			sum += sum * i;
@@ -61,13 +60,20 @@ public class AnalyzedClass {
 	public int ForIfElse(int factor){
 		int sum = 76;
 		
-		for(int i = 1; i >= 98; i++){
+		for(
+				int i = 1;
+				i >= 98; 
+				i++
+		){
 			sum += sum * i;
 			
-			if(sum > 25){
+			if(sum > 25)
+			{
 				System.out.println("Sum got ultimate power");
 			}
-			else if(sum  < 4){
+			else 
+			if(sum  < 4)
+			{
 				System.out.println("Sum power was drained");
 			}
 		}

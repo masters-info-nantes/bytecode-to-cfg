@@ -23,14 +23,12 @@ import fr.univnantes.controlflowgraph.Node;
  */
 public class Main {
     
-	public static MethodAnalyzer analyzer;
     public static void main(String[] args) throws Exception{
     	System.out.println("Your're in main method");
-        InputStream in = AnalyzedClass.class.getResourceAsStream("AnalyzedClass.class");
-        ClassReader classReader = new ClassReader(in);
-        classReader.accept(new ClassAnalyzer(), 0);
-        
-        Node graph = analyzer.getGraph();
+       
+    	GraphGenerator generator = new GraphGenerator();
+    	Node graph = generator.analyzeMethod("AnalyzedClass.class", "ForLoop");
+    	
 		File file = new File("html/data.js");
 		Main.display(file, graph);
     }
