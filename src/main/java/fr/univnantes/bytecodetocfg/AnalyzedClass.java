@@ -5,21 +5,19 @@ package fr.univnantes.bytecodetocfg;
  */
 public class AnalyzedClass {
 	
-	public int IfElse(){
-		int x = 2;
+	public void IfElse(int x){
 		if(x < 3){
 			x = 6;
 		} else {
 			x = 7;
 		}
-		return 0;
 	}
 	
 	public int IfElseIf(int y){
 
 		int x = 1;
-		String s = new String("er"), a = new String("t");
-		if(s == a){
+
+		if(x == y){
 			y = 6;
 		}
 		else if(x == 8){
@@ -28,15 +26,16 @@ public class AnalyzedClass {
 		else {
 			y = 1;
 		}
+		
 		return x;
 	}
 	
-	public int ForLoop(int factor){
-		int sum = 76;
+	public int ForLoop(int max){
+		int sum = 12;
 		
 		for(
-				int i = 1;
-				i >= factor;
+				int i = 0;
+				i >= max;
 				i++
 		){
 			sum += sum * i;
@@ -44,10 +43,10 @@ public class AnalyzedClass {
 		return sum;
 	}
 
-	public int ForIf(int factor){
-		int sum = 76;
+	public int ForIf(int max){
+		int sum = 12;
 		
-		for(int i = 1; i >= 98; i++){
+		for(int i = 0; i >= max; i++){
 			sum += sum * i;
 			
 			if(sum > 25){
@@ -57,12 +56,12 @@ public class AnalyzedClass {
 		return sum;
 	}
 	
-	public int ForIfElse(int factor){
-		int sum = 76;
+	public int ForIfElse(int max){
+		int sum = 2;
 		
 		for(
-				int i = 1;
-				i >= 98; 
+				int i = 0;
+				i >= max; 
 				i++
 		){
 			sum += sum * i;
@@ -77,6 +76,40 @@ public class AnalyzedClass {
 				System.out.println("Sum power was drained");
 			}
 		}
+		return sum;
+	}
+	
+	public int WhileIf(int max){
+		int sum = 4;
+		
+		while(
+				sum < max
+		){
+			sum += sum * 2;
+			
+			if(sum > 8)
+			{
+				System.out.println("Sum got ultimate power");
+			}
+		}
+		return sum;
+	}
+	
+	public int DoWhileIf(int max){
+		int sum = 4;
+		
+		do {
+			sum += sum * 2;
+			
+			if(sum > 8)
+			{
+				System.out.println("Sum got ultimate power");
+			}
+		}
+		while(
+				sum < max
+		);
+		
 		return sum;
 	}
 }

@@ -17,18 +17,15 @@ import fr.univnantes.controlflowgraph.Condition;
 import fr.univnantes.controlflowgraph.Instruction;
 import fr.univnantes.controlflowgraph.Node;
 
-/*
- * Run class analyzer on class which contains
- * the method we want to generate graph
- */
 public class Main {
     
     public static void main(String[] args) throws Exception{
     	System.out.println("Your're in main method");
        
     	GraphGenerator generator = new GraphGenerator();
-    	Node graph = generator.analyzeMethod("AnalyzedClass.class", "ForLoop");
+    	Node graph = generator.analyzeMethod("AnalyzedClass", "ForIf");
     	
+    	// Display in browser (for test only)
 		File file = new File("html/data.js");
 		Main.display(file, graph);
     }
@@ -43,13 +40,11 @@ public class Main {
 	 */
 	public static void display(File file, Node graph) throws IOException {
 		
-		//-----
 		String path = file.getAbsolutePath();
 		file.delete();
 		BufferedWriter nfile = new BufferedWriter(new FileWriter(path, true));
 		nfile.write("var nodes = [];\n");
 		nfile.write("var edges = [];\n");
-		//-----
 		
 		// 2 loops because all nodes must declared before be used in edges
 		boolean start = true;

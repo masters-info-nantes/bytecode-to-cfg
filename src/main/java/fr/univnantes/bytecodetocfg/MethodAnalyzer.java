@@ -4,20 +4,18 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import fr.univnantes.controlflowgraph.Arc;
 import fr.univnantes.controlflowgraph.GraphFactory;
-import fr.univnantes.controlflowgraph.Instruction;
 import fr.univnantes.controlflowgraph.Node;
 
-/*
+/**
  * Method analyzer triggered during method analyze.
  * Used to create control flow graph
  */
 public class MethodAnalyzer implements MethodVisitor{
 
-	private static final int GOTO_INST = 167;
-	
 	private GraphFactory factory;
 	private Node graph;
 	private Node currentNode;
@@ -32,6 +30,9 @@ public class MethodAnalyzer implements MethodVisitor{
 		this.lastCondition = false;
 	}	
 	
+	/**
+	 * Triggered when a new instruction is visited
+	 */
 	public void visitLabel(Label arg0) {
 		
 		// If node allready exists, don't duplicate
@@ -54,13 +55,15 @@ public class MethodAnalyzer implements MethodVisitor{
 		System.out.println("\nvisitLabel: " + arg0 + " - currentNode: " + currentNode.getName());
 	}
 	
+	/**
+	 * Triggered when if or goto instruction is visited
+	 */	
 	public void visitJumpInsn(int arg0, Label arg1) {		
 		
 		// Goto instruction : don't link condition end 
 		// with else block
-		if(arg0 == GOTO_INST){
+		if(arg0 == Opcodes.GOTO){
 			this.linkLast = !this.lastCondition;
-			//this.lastCondition = false; // Goto = endif, so no if block unclosed
 		}
 		else {
 			this.lastCondition = true;
@@ -72,23 +75,30 @@ public class MethodAnalyzer implements MethodVisitor{
 			otherwise = this.factory.makeInstruction(getLabelId(arg1), "");
 		}
 
-		//if(this.lastCondition){
+		// Link new node if in condition block
+		if(this.lastCondition){
 			Arc arcCond = this.factory.makeArc("", otherwise);
 			this.currentNode.addArc(arcCond);			
-		//}
+		}
 		
-		if(arg0 == GOTO_INST){
+		if(arg0 == Opcodes.GOTO){
 			this.lastCondition = false; // Goto = endif, so no if block unclosed
 		}
 
 		System.out.println("visitJumpInsn: " + arg0 + " # " + arg1 + " - create: " + otherwise.getName());
 	}
 	
+	/**
+	 * Convert instruction label into integer
+	 */
 	private int getLabelId(Label label){
 		String sLabel = label.toString();
 		return Integer.parseInt(sLabel.substring(1, sLabel.length()));
 	}
 	
+	/**
+	 * Return generated graph
+	 */
 	public Node getGraph(){
 		return this.graph;
 	}
