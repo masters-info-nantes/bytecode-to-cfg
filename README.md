@@ -5,6 +5,12 @@ Description
 -----------
 Generation of a Control Flow Graph from a java bytecode using ASM
 
+Authors
+-----------
+- Pena Anthony
+- Brondin Nicolas
+- Bardon Jérémy
+
 Requirements
 -----------
 - [Control flow graph](https://github.com/masterALMA2016/control-flow-graph) installed
